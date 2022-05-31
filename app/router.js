@@ -5,6 +5,6 @@ const apiController = require('./apiController');
 
 router.get('/', mainController.index);
 
-router.get('/api/login', apiController.loginPost);
+router.post('/api/login', apiController.loginPost);
 
 module.exports = router;

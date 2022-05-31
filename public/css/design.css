@@ -1,9 +1,82 @@
 :root {
-    --main-color: #4f5940;
+    --main-color: #243646;
     --main-text-color: #FFFFFF;
+    --border-radius: 5px;
 }
 body {
     font-family: Arial, Helvetica, sans-serif;
     background-color: var(--main-color);
     color: var(--main-text-color);
 }
+#app {
+    transition: .5s;
+    width: 100vw;
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left : 0;
+}
+
+input, button, select, textarea {
+    background-color: var(--main-color);
+    padding: 1rem;
+}
+button {
+    cursor: pointer;
+    background-color: darkslategrey;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    margin: 1em .5em;
+}
+h1 { font-size: 3rem; }
+h2 { font-size: 2rem; }
+
+
+/*
+/* VUES */
+/*
+
+/* Login */
+.view-login {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.login-form {
+    background-color: rgba(0,0,0,.5);
+    padding: 1rem;
+    border-radius: var(--border-radius);
+}
+
+/* Lobby */
+.view-lobby {
+    background-color: peru;
+    display: flex;
+    justify-content: center;
+    align-items: stretch;
+}
+
+.game-zone {
+    width: 50vw;
+    background-color: transparent;
+}
+.tchat-zone {
+    width: 35vw;
+    background-color: rgba(0,0,0,.5);
+    display: flex;
+    flex-direction: column;
+    justify-content: end;
+}
+.tchat-messages {
+    background-color: red;
+    height: 10vh;
+}
+.tchat-form {
+    height: 10vh;
+}
+.user-zone {
+    width: 15vw;
+    background-color: rgba(0,0,0,.2);
+}
+
