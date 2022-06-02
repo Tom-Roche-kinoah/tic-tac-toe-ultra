@@ -1,15 +1,14 @@
 :root {
     --main-color: #243646;
     --main-text-color: #FFFFFF;
+    --em-color: #ff8800;
     --border-radius: 5px;
 }
 body {
     font-family: Arial, Helvetica, sans-serif;
     background-color: var(--main-color);
     color: var(--main-text-color);
-}
-#app {
-    transition: .5s;
+    transition: background-color .5s;
     width: 100vw;
     height: 100vh;
     position: fixed;
@@ -17,13 +16,17 @@ body {
     left : 0;
 }
 
+
 input, button, select, textarea {
     background-color: var(--main-color);
     padding: 1rem;
 }
 button {
     cursor: pointer;
-    background-color: darkslategrey;
+    background-color: var(--em-color);
+}
+::placeholder {
+    color: rgba(255, 255, 255, .5);
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -38,7 +41,7 @@ h2 { font-size: 2rem; }
 /*
 
 /* Login */
-.view-login {
+.login {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -50,33 +53,90 @@ h2 { font-size: 2rem; }
 }
 
 /* Lobby */
-.view-lobby {
-    background-color: peru;
+.lobby {
+    background-color: var(--main-color);
     display: flex;
     justify-content: center;
     align-items: stretch;
+    width: 100vw;
+    height: 100vh;
 }
 
 .game-zone {
-    width: 50vw;
+    flex: 1;
     background-color: transparent;
 }
-.tchat-zone {
-    width: 35vw;
+.chat-zone {
+    width: 25rem;
     background-color: rgba(0,0,0,.5);
+    border-right: 1px solid rgba(255,255,255,0.2);
+    border-left: 1px solid rgba(255,255,255,0.2);
     display: flex;
     flex-direction: column;
     justify-content: end;
 }
-.tchat-messages {
-    background-color: red;
+.chat-messages {
+    max-height: 90vh;
+    overflow: auto;
+}
+.chat-ui {
     height: 10vh;
 }
-.tchat-form {
-    height: 10vh;
+.chat-form {
+    display: flex;
 }
-.user-zone {
-    width: 15vw;
-    background-color: rgba(0,0,0,.2);
+#chat-message {
+    flex: 1;
+}
+.user-list {
+    width: 15rem;
+    background-color: rgba(0,0,0,.8);
 }
 
+
+@keyframes openMessage {
+    from {
+        background-color: white;
+    }
+    to {
+        background-color: transparent;
+    }
+}
+.message {
+    overflow: hidden;
+    animation: openMessage .5s forwards;
+    padding: 0.5rem 1rem;
+    font-size: 1.1em;
+}
+.message-meta {
+   font-size: .8em; 
+   color: var(--em-color);
+}
+.message-pseudo {
+    font-weight: bold;
+}
+.message-date {
+    font-style: italic;
+    color: #777;
+}
+.message-texte {
+    line-height: 1.6;
+}
+
+.message.system {
+    opacity: .5;
+    font-size: .8em;
+    font-style: italic;
+}
+.message.system .message-pseudo{
+    color: crimson;
+}
+
+
+.connected-user {
+    display: block;
+    padding: .5em 1em;
+}
+.connected-user:hover {
+    background-color: var(--em-color);
+}

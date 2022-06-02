@@ -2,29 +2,23 @@ require('dotenv').config();
 
 // node modules
 const express = require('express');
-const app = express();
+const http = require('http');
 const cors = require('cors');
 
-const http = require('http');
-const server = http.createServer(app);
-const { Server } = require('socket.io');
-const io = new Server(server);
-
-// mes modules
-const soketListener = require('./app/socket');
-const router = require('./app/router');
-
+const app = express();
 
 app.use(express.static('public'));
 app.use(cors());
 app.use(express.urlencoded({ extended: true }));
 
+// router
+const router = require('./app/router');
 app.use(router);
 
-// socket
-io.on('connection', (socket) => {
-    soketListener.global(socket);
-});
+// web socket
+const server = http.createServer(app);
+const webSocket = require('./app/webSocket');
+webSocket.global(server);
 
 
 const port = process.env.PORT;
