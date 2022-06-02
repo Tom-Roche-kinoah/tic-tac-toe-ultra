@@ -4,6 +4,7 @@
   "description": "Tic Tac Toe Game",
   "main": "index.js",
   "scripts": {
+    "start": "node .",
     "test": "nodemon ."
   },
   "author": "Kinoah",

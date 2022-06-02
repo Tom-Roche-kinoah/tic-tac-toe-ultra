@@ -4,6 +4,8 @@ const dom = {
     chat: document.querySelector('.chat-messages'),
     chatForm: document.querySelector('.chat-form'),
     chatMessageInput: document.querySelector('#chat-message'),
+    myProfile: document.querySelector('.my-profile'),
+    onlineTitle: document.querySelector('.online-title'),
 };
 
 
@@ -13,6 +15,7 @@ function randomName() {
     const randomIndex = Math.floor(Math.random() * list.length);
     return list[randomIndex];
 }
+
 const user = {
     pseudo: randomName(), // pour test
     id: 'undefined',
@@ -30,6 +33,14 @@ const user = {
             text: `Bienvenue ${user.pseudo}`,
         };
         chat.displayMessage(message);
+    },
+    myProfile: () => {
+        const profile = `
+        <a href="#" title="${user.id}">
+            <span class="user-pseudo">${user.pseudo}</span><br>
+            <span class="user-id">#${user.id}</span>
+        </a>`;
+        dom.myProfile.insertAdjacentHTML('beforeend', profile);
     },
 };
 
@@ -51,6 +62,7 @@ const app = {
             user.sayWelcome();
             //user.showUserId();
             socket.emit('user-logged-in', user);
+            user.myProfile();
         });
 
         // un autre utilisateur s'est connecté
@@ -65,13 +77,18 @@ const app = {
 
         // un utilisateur s'est déconnecté
         socket.on('user-logged-out', (user) => {
-            chat.userLoggedOut(user);
+            if(user) {
+                chat.userLoggedOut(user);
+            }
         });
 
-        // le serveur nous envoie la liste des user mise à jour
+        // 1ere connexion, le serveur nous envoie la liste des users connectes actuellement
         socket.on('all-users-logged-in', (loggedInUsers) => {
-            console.log('liste des users online reçue');
             chat.loggedInUsers(loggedInUsers);
+        });
+        // 1ere connexion, le serveur nous envoie un historique du chat
+        socket.on('chat-history', chatHistory => {
+            chat.history(chatHistory);
         });
 
         // le serveur nous envoie un message chat
@@ -85,33 +102,51 @@ const app = {
 
 const chat = {
     userLoggedIn: (user) => {
-        const item = document.createElement('li');
-        item.innerText = user.pseudo;
-        item.dataset.id = user.id;
-        dom.userList.appendChild(item);
+        const item = `
+        <a href="#" class="connected-user" data-id="${user.id}">
+            ${user.pseudo}
+        </a>`;
+        dom.userList.insertAdjacentHTML('beforeend',item);
+        chat.onlineUsers();
     },
 
     userLoggedOut: (user) => {
         const userToRemove = document.querySelector(`[data-id="${user.id}"]`);
         userToRemove.remove();
+        chat.onlineUsers();
     },
 
     loggedInUsers: (loggedInUsers) => {
         dom.userList.innerText = '';
         for (const user of loggedInUsers) {
-            const item = document.createElement('li');
-            item.innerText = user.pseudo;
-            item.dataset.id = user.id;
-            dom.userList.appendChild(item);
+            const item = `
+            <a href="#" class="connected-user" data-id="${user.id}">
+                ${user.pseudo}
+            </a>`;
+            dom.userList.insertAdjacentHTML('beforeend',item);
+        }
+        chat.onlineUsers();
+    },
+
+    onlineUsers: () => {
+        const nbUserOnline = document.querySelectorAll('.user-list > *').length;
+        let userOnlineText = 'Il n\'y a personne...';
+        if(nbUserOnline > 0) {
+            userOnlineText = `En ligne - <span>${nbUserOnline}</span>`;
+        }
+        dom.onlineTitle.innerHTML = userOnlineText;
+    },
+
+    history: (chatHistory) => {
+        for (const message of chatHistory) {
+            chat.displayMessage(message);
         }
     },
 
     displayMessage: (message) => {
-        const date = new Date;
         let messageClass = 'user';
-        const timeStamp = date.toLocaleTimeString();
         if(!message.date) {
-            message.date = timeStamp;
+            message.date = new Date();
         }
         if(message.pseudo === 'SYSTEM') {
             messageClass = 'system';
@@ -120,7 +155,7 @@ const chat = {
         <div class="message ${messageClass}">
             <div class="message-meta">
                 <span class="message-pseudo">${message.pseudo}</span>
-                <span class="message-date">${message.date}</span>
+                <span class="message-date">${utils.fullDateTextFr(message.date)}</span>
             </div>
             <div class="message-texte">${message.text}</div>
         </div>`;
@@ -130,9 +165,12 @@ const chat = {
     },
 
     sendMessage: () => {
-        const text = dom.chatMessageInput.value;
+        let text = utils.sanitizeInput(dom.chatMessageInput.value);
+        text = chatFunction.detectTags(text);
+
         if(!text) {
             console.log('Vous ne pouvez pas envoyer un message vide...');
+            chat.clearInputMessage();
             return;
         }
         const message = {
@@ -141,6 +179,10 @@ const chat = {
         };
         socket.emit('chat-message', message );
         chat.displayMessage(message);
+        chat.clearInputMessage();
+    },
+
+    clearInputMessage: () => {
         dom.chatMessageInput.value = '';
     },
 
@@ -158,7 +200,71 @@ const chat = {
 };
 
 
-app.init();
+const chatFunction = {
+    detectTags: (input) => {
+        if(input.includes('[img]')) {
+            return chatFunction.img(input);
+        } else {
+            return input;
+        }
+    },
+
+    img: (input) => {
+        return input.replace(/\[img\](.*?)\[\/img\]/g, '<img src=\'$1\' />');
+    },
+
+};
+
+
+const utils = {
+    // nettoyage des saisies
+    sanitizeInput: (input) => {
+        return input.replace( /(<([^>]+)>)/ig, '').trim();
+    },
+
+    // gestion des dates
+    fullDateTextFr: (date) => {
+        let myDate = new Date(date);
+        const longDatefrFRFormatter = new Intl.DateTimeFormat('fr-FR', {
+            year:  'numeric',
+            month: 'long',
+            day:   'numeric',
+        });
+        const shortHourfrFRFormatter = new Intl.DateTimeFormat('fr-FR', {
+            hour: 'numeric',
+            minute: 'numeric',
+        });
+        const longHourfrFRFormatter = new Intl.DateTimeFormat('fr-FR', {
+            hour: 'numeric',
+            minute: 'numeric',
+            second: 'numeric',
+        });
+
+        // est-ce aujourd'hui
+        if(utils.isToday(myDate)) {
+            // si oui on affiche seulement l'heure
+            myDate = `${longHourfrFRFormatter.format(myDate)}`; 
+        } else {
+            // sinon c'est ancien, on affiche une date complete
+            myDate = `le ${longDatefrFRFormatter.format(myDate)}, à ${shortHourfrFRFormatter.format(myDate)}`;
+        }
+
+        return myDate;
+    },
+    // est-ce aujourd'hui ?
+    isToday: (date) => {
+        const today = new Date();
+        // si c'est pareil que la date fournie
+        if (today.toDateString() === date.toDateString()) {
+            return true;
+        }
+        return false;
+    },
+};
+
+
+// chargement du document on lance app.init
+document.addEventListener('DOMContentLoaded', app.init);
 
 // const app = {
 //     // demarrage de l'app

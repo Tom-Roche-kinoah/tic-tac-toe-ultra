@@ -1,6 +1,8 @@
 const { Server } = require('socket.io');
 
 const loggedInUsers = [];
+const chatHistory = [];
+const historySize = 20;
 
 const webSocket = {
     global: (server) => {
@@ -13,6 +15,8 @@ const webSocket = {
             // on envoit les infos de base UNIQUEMENT au nouveau client
             // par ex: la liste des users connectés
             socket.emit('all-users-logged-in', loggedInUsers);
+            socket.emit('chat-history', chatHistory);
+
 
             // découverte d'un user qui se connecte
             socket.on('user-logged-in', (user) => {
@@ -24,7 +28,7 @@ const webSocket = {
                 loggedInUsers.push(user);
             });
 
-            // découverte d'un user qui se déco (manuel ou close tab/nav)
+            // découverte d'un user qui se déco (manuel ou close tab/nav/refresh)
             socket.on('disconnect', () => {
                 const userId = socket.id;
                 // on le cherche et on le retire de la liste des users connectés
@@ -41,6 +45,15 @@ const webSocket = {
             socket.on('chat-message', (message) => {
                 // on envoie le message à tout le monde sauf l'emmeteur
                 socket.broadcast.emit('chat-message', message);
+
+                // log des messages
+                message.date = new Date;
+                chatHistory.push(message);
+                // on garde seulement x elements
+                if(chatHistory.length > historySize) {
+                    chatHistory.shift();
+                }
+
             });
         });
 

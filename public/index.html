@@ -5,6 +5,10 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="css/reset.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@200;400;900&display=swap"> 
+    <link rel="stylesheet" href="css/font-awesome.min.css">
     <link rel="stylesheet" href="css/design.css">
     <title>Tic Tac Toe Ultra !</title>
 </head>
@@ -23,12 +27,22 @@
                 <div class="chat-ui">
                     <form action="#" method="POST" class="chat-form">
                         <input type="text" id="chat-message" name="message" placeholder="message" autocomplete="off">
-                        <button>↵</button>
+                        <button><i class="fa fa-paper-plane" aria-hidden="true"></i></button>
                     </form>
                 </div>
             </div>
                 
-            <div class="user-list">
+            <div class="user-zone">
+                <div class="user-zone-header">
+                    <a href="#" class="my-profile">
+                        <i class="fa fa-user-circle-o fa-lg" aria-hidden="true"></i> 
+                    </a>
+                    <div class="online-title">
+                        Il n'y a personne...
+                    </div>
+                </div>
+                <div class="user-list">
+                </div>
             </div>
         </div>
         
