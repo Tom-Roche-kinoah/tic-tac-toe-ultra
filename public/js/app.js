@@ -108,6 +108,10 @@ const chat = {
             ${user.pseudo}
         </a>`;
         dom.userList.insertAdjacentHTML('beforeend',item);
+        document.querySelector(`[data-id="${user.id}"]`).addEventListener('pointerdown', (e) => {
+            e.preventDefault();
+            dom.chatMessageInput.value = `@${user.pseudo}`;
+        });
         chat.onlineUsers();
     },
 
