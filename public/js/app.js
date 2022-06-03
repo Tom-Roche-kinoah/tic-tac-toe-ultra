@@ -51,6 +51,7 @@ const app = {
     init: () => {
         app.socketListeners();
         chat.eventListeners();
+        chatFunction.actionButtons();
         console.log('app started !');
     },
 
@@ -120,10 +121,14 @@ const chat = {
         dom.userList.innerText = '';
         for (const user of loggedInUsers) {
             const item = `
-            <a href="#" class="connected-user" data-id="${user.id}">
+            <a href="#" class="connected-user" data-id="${user.id}" title="@Ping ${user.pseudo}">
                 ${user.pseudo}
             </a>`;
             dom.userList.insertAdjacentHTML('beforeend',item);
+            document.querySelector(`[data-id="${user.id}"]`).addEventListener('pointerdown', (e) => {
+                e.preventDefault();
+                dom.chatMessageInput.value = `@${user.pseudo}`;
+            });
         }
         chat.onlineUsers();
     },
@@ -201,6 +206,18 @@ const chat = {
 
 
 const chatFunction = {
+    actionButtons: () => {
+        const buttons = document.querySelectorAll('.chat-actions button');
+        console.log(buttons);
+        buttons.forEach(button => {
+            button.addEventListener('pointerdown', function(e) {
+                e.preventDefault();
+                const tag = this.dataset.tag;
+                dom.chatMessageInput.value = tag;
+            });
+        });
+    },
+
     detectTags: (input) => {
         if(input.includes('[img]')) {
             return chatFunction.img(input);

@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0">
+    <meta name="apple-mobile-web-app-capable" content="yes">
     <link rel="stylesheet" href="css/reset.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -29,6 +30,10 @@
                         <input type="text" id="chat-message" name="message" placeholder="message" autocomplete="off">
                         <button><i class="fa fa-paper-plane" aria-hidden="true"></i></button>
                     </form>
+                    <div class="chat-actions">
+                        <button data-tag="[img] url [/img]" class="insert-img-tag" title="insérer un tag image"><i class="fa fa-picture-o" aria-hidden="true"></i></button>
+                        <button data-tag="[url] url [/url]" class="insert-link-tag" title="insérer tag lien"><i class="fa fa-link" aria-hidden="true"></i></button>
+                    </div>
                 </div>
             </div>
                 

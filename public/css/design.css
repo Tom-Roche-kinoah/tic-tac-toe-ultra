@@ -89,15 +89,18 @@ h2 { font-size: 2rem; }
     flex-direction: column;
     justify-content: end;
 }
+
+
+
 .chat-messages {
     overflow: hidden;
-    max-height: 90vh;
+    max-height: calc(100vh - 6rem);
 }
 .chat-messages:hover {
     overflow: auto;
 }
 .chat-ui {
-    height: 10vh;
+    height: 6rem;
 }
 .chat-form {
     display: flex;
@@ -105,17 +108,34 @@ h2 { font-size: 2rem; }
 #chat-message {
     flex: 1;
 }
+.chat-actions {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: .5rem 1rem;
+    font-size: 1.2em;
+}
+.chat-actions button{
+    opacity: .5;
+    background-color: transparent;
+    padding: 0em;
+}
+.chat-actions button:hover{
+    opacity: 1;
+}
+
+
 .user-zone {
     width: 15rem;
     background-color: rgba(0,0,0,.8);
 }
 .user-zone-header {
-    height: 10vh;
+    height: 6rem;
     background: linear-gradient(0deg, rgba(0,0,0,0) 0%, var(--main-color) 30%); 
 }
 .user-list {
     overflow: hidden;
-    height: 90vh;
+    height: calc(100vh - 6rem);
 }
 .user-list:hover {
     overflow: auto;
@@ -171,7 +191,7 @@ h2 { font-size: 2rem; }
     font-weight: bold;
 }
 .my-profile .user-peudo {
-
+    font-weight: inherit;
 }
 .my-profile .user-id {
     font-size:.7em;
@@ -192,4 +212,37 @@ h2 { font-size: 2rem; }
 }
 .connected-user:hover {
     background-color: var(--em-color);
+}
+
+
+
+@media (max-width:950px) {
+    .game-zone {
+        display: none;
+    }
+    .chat-zone {
+        width: calc(100vw - 15rem);
+    }
+    .user-list,
+    .chat-messages {
+        overflow: auto;
+    }
+}
+
+@media (max-width:500px) {
+    .lobby {
+        overflow: auto;
+        width:200vw;
+    }
+    .chat-zone,
+    .user-zone {
+        width: 100vw;
+        border: none;
+    }
+    .chat-ui {
+        height: 10rem;
+    }
+    .chat-messages {
+        max-height: calc(100vh - 10rem);
+    }
 }
